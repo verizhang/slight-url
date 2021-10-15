@@ -2,21 +2,25 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"gorm.io/gorm"
 	"slight-url/config"
+	"slight-url/src/user"
 )
 
-func main(){
+var DB *gorm.DB
+
+func init() {
 	config.InitENV()
-	config.InitDB()
+	DB = config.InitDB()
+}
+
+func main() {
 	app := gin.Default()
 
-	app.GET("/ping", func(context *gin.Context) {
-		context.JSON(http.StatusOK, gin.H{"message":"success"})
-	})
+	user.UserModule(app, DB)
 
 	err := app.Run()
-	if err != nil{
+	if err != nil {
 		panic(err)
 	}
 }
