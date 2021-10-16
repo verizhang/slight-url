@@ -3,6 +3,8 @@ package user
 import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
+	"net/http"
+	"slight-url/src/core/middleware"
 )
 
 func UserModule(app *gin.Engine, DB *gorm.DB) {
@@ -16,12 +18,17 @@ func UserModule(app *gin.Engine, DB *gorm.DB) {
 
 	AuthRoute := app.Group("/auth")
 	{
-		AuthRoute.POST("/register", func(context *gin.Context) {
-			UserService.Register(context)
-		})
+		AuthRoute.POST("/register", UserService.Register)
+		AuthRoute.POST("/login", UserService.Login)
+	}
 
-		AuthRoute.POST("/login", func(context *gin.Context) {
-			UserService.Login(context)
+	PingRoute := app.Group("/user")
+	PingRoute.Use(middleware.Auth)
+	{
+		PingRoute.GET("/ping", func(context *gin.Context) {
+			context.JSON(http.StatusOK, gin.H{
+				"message": "ping success",
+			})
 		})
 	}
 }

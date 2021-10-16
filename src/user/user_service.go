@@ -3,9 +3,8 @@ package user
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 	"net/http"
-	"slight-url/src/core"
+	"slight-url/src/core/exceptions"
 )
 
 type UserService struct {
@@ -27,7 +26,9 @@ func (UserService *UserService) Register(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, ToDto(userEntity))
+	userDto = ToDto(userEntity)
+	userDto.Token, err = GetToken(userEntity)
+	context.JSON(http.StatusOK, userDto)
 }
 
 func (UserService *UserService) Login(context *gin.Context) {
@@ -35,32 +36,22 @@ func (UserService *UserService) Login(context *gin.Context) {
 	err := context.ShouldBindJSON(&loginDto)
 	if err != nil {
 		fmt.Println(err.Error())
-		context.JSON(http.StatusBadRequest, core.BadRequestException(err.Error()))
+		context.JSON(http.StatusBadRequest, exceptions.BadRequest(err.Error()))
 		return
 	}
 
 	var userEntity User
 	UserService.UserRepository.DB.Find(&userEntity, User{Username: loginDto.Username})
 	if userEntity == (User{}) {
-		context.JSON(http.StatusBadRequest, core.BadRequestException("User not found"))
+		context.JSON(http.StatusBadRequest, exceptions.BadRequest("User not found"))
 		return
 	}
 	if ComparePassword(userEntity.Password, loginDto.Password) {
-		context.JSON(http.StatusOK, ToDto(userEntity))
+		var userDto UserDto = ToDto(userEntity)
+		userDto.Token, err = GetToken(userEntity)
+		context.JSON(http.StatusOK, userDto)
 	} else {
-		context.JSON(http.StatusBadRequest, core.BadRequestException("Username or password wrong"))
+		context.JSON(http.StatusBadRequest, exceptions.BadRequest("Username or password wrong"))
+		return
 	}
-}
-
-func BcryptPassword(password string) string {
-	result, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(result)
-}
-
-func ComparePassword(hashedPassword string, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
-	if err != nil {
-		return false
-	}
-	return true
 }

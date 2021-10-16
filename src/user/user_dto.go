@@ -5,6 +5,7 @@ type UserDto struct {
 	Name     string `json:"name" form:"name" binding:"required"`
 	Username string `json:"username" form:"username" binding:"required"`
 	Password string `json:"password" form:"password" binding:"required"`
+	Token    string `json:"token"`
 }
 
 type LoginDto struct {

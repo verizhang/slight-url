@@ -1,8 +1,8 @@
-package core
+package exceptions
 
 import "github.com/gin-gonic/gin"
 
-func BadRequestException(message interface{}) gin.H {
+func BadRequest(message interface{}) gin.H {
 	return gin.H{
 		"statusCode": 400,
 		"message":    message,
