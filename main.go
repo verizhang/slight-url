@@ -4,20 +4,21 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"slight-url/config"
-	"slight-url/src/user"
+	"slight-url/src/modules"
 )
 
 var DB *gorm.DB
 
 func init() {
 	config.InitENV()
-	DB = config.InitDB()
+	config.InitDB()
 }
 
 func main() {
 	app := gin.Default()
 
-	user.UserModule(app, DB)
+	modules.UserModule(app)
+	modules.UrlModule(app)
 
 	err := app.Run()
 	if err != nil {

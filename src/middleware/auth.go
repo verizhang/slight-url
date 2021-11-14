@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"os"
-	"slight-url/src/core/exceptions"
+	"os/user"
+	"reflect"
+	"slight-url/config"
+	"slight-url/core/exceptions"
+	"slight-url/src/models"
 	"strings"
 )
 
-func Auth(c *gin.Context) {
+func Auth(ctx *gin.Context) {
 	const bearer = "Bearer"
-	var authHeader = c.GetHeader("Authorization")
+	var authHeader = ctx.GetHeader("Authorization")
 	if authHeader == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, exceptions.Unauthorized("Authorization header not found"))
-		return
+		exceptions.Unauthorized(ctx, "Authorization header not found")
 	}
 
 	var tokenString = strings.Trim(authHeader[len(bearer):], " ")
@@ -28,11 +30,15 @@ func Auth(c *gin.Context) {
 		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, exceptions.Unauthorized(err.Error()))
-		return
+		exceptions.Unauthorized(ctx, err.Error())
 	}
 
-	if !validatedToken.Valid {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, exceptions.Unauthorized(err.Error()))
+	payload := validatedToken.Claims.(jwt.MapClaims)
+
+	var findUser models.User
+	config.DB.Find(&findUser, payload["id"])
+	if reflect.DeepEqual(findUser, user.User{}) {
+		exceptions.Unauthorized(ctx, "User not found")
 	}
+	ctx.Set("user", findUser)
 }

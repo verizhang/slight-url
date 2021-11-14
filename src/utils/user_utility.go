@@ -1,10 +1,11 @@
-package user
+package utils
 
 import (
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"os"
 	"slight-url/config"
+	"slight-url/src/models"
 	"strconv"
 	"time"
 )
@@ -22,7 +23,7 @@ func ComparePassword(hashedPassword string, password string) bool {
 	return true
 }
 
-func GetToken(user User) (string, error) {
+func GetToken(user models.User) (string, error) {
 	var secretKey = os.Getenv("JWT_SECRET")
 	var expired, _ = strconv.Atoi(os.Getenv("JWT_EXPIRED"))
 
