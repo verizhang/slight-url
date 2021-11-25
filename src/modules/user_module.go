@@ -28,5 +28,6 @@ func UserModule(app *gin.Engine) {
 	UserRoute.Use(middleware.Auth)
 	{
 		UserRoute.GET("", UserService.FindAll)
+		//UserRoute.GET("/:key",)
 	}
 }

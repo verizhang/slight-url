@@ -14,7 +14,7 @@ type UrlRepository struct {
 func (UrlRepository *UrlRepository) FindALl(urlQuery dtos.UrlQueryDto) (data paginations.Pagination) {
 	var urls []models.Url
 
-	query := UrlRepository.DB.Preload("User")
+	query := UrlRepository.DB.Preload("User").Where("user_id = ?", urlQuery.User.ID)
 	query = paginations.Paginate(query, paginations.PaginationOption{
 		Page:  urlQuery.Page,
 		Limit: urlQuery.Limit,
@@ -27,5 +27,6 @@ func (UrlRepository *UrlRepository) FindALl(urlQuery dtos.UrlQueryDto) (data pag
 		Model: []models.Url{},
 		Data:  &urls,
 	})
+
 	return
 }

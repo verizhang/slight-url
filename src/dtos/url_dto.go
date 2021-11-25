@@ -19,4 +19,5 @@ func (UrlDto *UrlDto) ToEntity() models.Url {
 
 type UrlQueryDto struct {
 	paginations.PaginationQuery
+	User models.User
 }
