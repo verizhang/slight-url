@@ -22,12 +22,12 @@ func UserModule(app *gin.Engine) {
 	{
 		AuthRoute.POST("/register", UserService.Register)
 		AuthRoute.POST("/login", UserService.Login)
+		AuthRoute.POST("/change_password", UserService.ChangePassword)
 	}
 
 	UserRoute := app.Group("/user")
 	UserRoute.Use(middleware.Auth)
 	{
-		UserRoute.GET("", UserService.FindAll)
-		//UserRoute.GET("/:key",)
+		//UserRoute.GET("/", UserService.FindAll)
 	}
 }
