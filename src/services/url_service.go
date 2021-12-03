@@ -59,7 +59,7 @@ func (UrlService *UrlService) FindALl(ctx *gin.Context) {
 		exceptions.BadRequest(ctx, err.Error())
 		return
 	}
-	var urls = UrlService.UrlRepository.FindALl(urlQuery)
+	var urls = UrlService.UrlRepository.FindALl(&urlQuery)
 
 	ctx.JSON(http.StatusOK, urls)
 }
