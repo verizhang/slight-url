@@ -25,6 +25,12 @@ type LoginDto struct {
 	Password string `form:"password" binding:"required"`
 }
 
+type ChangePasswordDto struct {
+	Username    string `form:"username" binding:"required"`
+	OldPassword string `form:"oldPassword" binding:"required"`
+	NewPassword string `form:"newPassword" binding:"required"`
+}
+
 type UserQueryDto struct {
 	paginations.PaginationQuery
 }
