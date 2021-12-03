@@ -11,17 +11,17 @@ type UserRepository struct {
 	DB *gorm.DB
 }
 
-func (UserRepository *UserRepository) FindAll(userQuery dtos.UserQueryDto) (data paginations.Pagination) {
+func (UserRepository *UserRepository) FindAll(userQuery *dtos.UserQueryDto) (data paginations.Pagination) {
 	var user []models.User
 
 	query := UserRepository.DB
-	query = paginations.Paginate(query, paginations.PaginationOption{
+	query = paginations.Paginate(query, &paginations.PaginationOption{
 		Page:  userQuery.Page,
 		Limit: userQuery.Limit,
 	})
 	query.Find(&user)
 
-	data = paginations.Create(query, paginations.PaginationOption{
+	data = paginations.Create(query, &paginations.PaginationOption{
 		Page:  userQuery.Page,
 		Limit: userQuery.Limit,
 		Model: []models.User{},
