@@ -25,6 +25,7 @@ func UrlModule(app *gin.Engine) {
 	{
 		PublicUrlRoute.POST("/", UrlService.Create)
 	}
+
 	app.GET("/:key", UrlService.HandleRedirect)
 
 	var UrlRoute = app.Group("/url/user")
