@@ -11,7 +11,7 @@ func GetTotalItems(db *gorm.DB, model interface{}) int64 {
 	return totalItems
 }
 
-func Paginate(query *gorm.DB, options PaginationOption) (tx *gorm.DB) {
+func Paginate(query *gorm.DB, options *PaginationOption) (tx *gorm.DB) {
 	var page = options.Page
 	if page == 0 {
 		page = 1
@@ -33,7 +33,7 @@ func Paginate(query *gorm.DB, options PaginationOption) (tx *gorm.DB) {
 	return
 }
 
-func Create(query *gorm.DB, options PaginationOption) (pagination Pagination) {
+func Create(query *gorm.DB, options *PaginationOption) (pagination Pagination) {
 	totalRows := GetTotalItems(query, options.Model)
 	pagination.Meta.Page = options.Page
 	pagination.Meta.Limit = options.Limit
