@@ -8,6 +8,7 @@ import (
 	"slight-url/src/dtos"
 	"slight-url/src/models"
 	"slight-url/src/repositories"
+	"slight-url/src/utils"
 	"strconv"
 	"time"
 )
@@ -19,6 +20,12 @@ type UrlService struct {
 func (UrlService *UrlService) Create(ctx *gin.Context) {
 	var urlDto dtos.UrlDto
 	err := ctx.ShouldBindJSON(&urlDto)
+	if err != nil {
+		exceptions.BadRequest(ctx, err.Error())
+		return
+	}
+
+	err = utils.UrlValidator(urlDto.Destination)
 	if err != nil {
 		exceptions.BadRequest(ctx, err.Error())
 		return
